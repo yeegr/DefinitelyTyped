@@ -82,7 +82,7 @@ User.beforeCreate(function(user, fn) {
 User.create({username: 'Not a Boss', accessLevel: 20}).error(function(err) {
   console.log(err) // You can't grant this user an access level above 10!
 });
-User.create({username: 'Boss', accessLevel: 20}).success(function(user) {
+User.create({username: 'Boss', accessLevel: 20}).then(function(user) {
   console.log(user) // user object with username as Boss and accessLevel of 20
 });
 
@@ -136,7 +136,7 @@ Tasks.belongsTo(Projects);
 
 // Transactions Test
 
-sequelize.transaction().success(function(t) {
+sequelize.transaction().then(function(t) {
   // we just opened a new connection to the database which is transaction exclusive.
   // also we send some first transaction queries to the database.
   
@@ -148,14 +148,14 @@ sequelize.transaction().success(function(t) {
   // do some async stuff ...
   
   // if everything is ok ... commit the transaction
-  t.commit().success(function() {});
+  t.commit().then(function() {});
   
   // if something failed ... rollback the transaction
-  t.rollback().success(function() {});
+  t.rollback().then(function() {});
 });
 
-sequelize.transaction().success(function(t) {
-  User.create({ username: 'foo' }, { transaction: t }).success(function() {
+sequelize.transaction().then(function(t) {
+  User.create({ username: 'foo' }, { transaction: t }).then(function() {
     // this user will only be available inside the session
     User.all({ transaction: t }); // will return the user
     User.all(); // will not return the user

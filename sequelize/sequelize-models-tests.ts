@@ -272,12 +272,12 @@ Project.drop(); // will emit success or failure event
 Task.drop(); // will emit success or failure event
 
 // event handling:
-Project.sync().success(function() {
+Project.sync().then(function() {
   // ok ... everything is nice!
 }).error(function(error) {
   // oooh, did you entered wrong database credentials?
 });
-Project.drop().success(function() {
+Project.drop().then(function() {
   // ok ... everything is nice!
 }).error(function(error) {
   // oooh, did you entered wrong database credentials?
@@ -293,12 +293,12 @@ sequelize.sync({force: true}); // emit ... nomnomnom
 sequelize.drop(); // I guess you've got it (emit)
 
 // emit handling:
-sequelize.sync().success(function() {
+sequelize.sync().then(function() {
   // woot woot
 }).error(function(error) {
   // whooops
 });
-sequelize.drop().success(function() {
+sequelize.drop().then(function() {
   // woot woot
 }).error(function(error) {
   // whooops
@@ -306,13 +306,13 @@ sequelize.drop().success(function() {
 
 
 // search for known ids
-Project.find(123).success(function(project) {
+Project.find(123).then(function(project) {
   // project will be an instance of Project and stores the content of the table entry
   // with id 123. if such an entry is not defined you will get null
 });
 
 // search for attributes
-Project.find({ where: {title: 'aProject'} }).success(function(project) {
+Project.find({ where: {title: 'aProject'} }).then(function(project) {
   // project will be the first entry of the Projects table with the title 'aProject' || null
 });
 
@@ -320,7 +320,7 @@ Project.find({ where: {title: 'aProject'} }).success(function(project) {
 Project.find({
   where: {title: 'aProject'},
   attributes: ['id', 'name', 'title']
-}).success(function(project) {
+}).then(function(project) {
   // project will be the first entry of the Projects table with the title 'aProject' || null
   // project.title will contain the name of the project
 });
@@ -331,39 +331,39 @@ Project
      offset: 10,
      limit: 2
   })
-  .success(function(result) {
+  .then(function(result) {
     console.log(result.count);
     console.log(result.rows);
   });
 
 // find multiple entries
-Project.findAll().success(function(projects) {
+Project.findAll().then(function(projects) {
   // projects will be an array of all Project instances
 });
 
 // also possible:
-Project.all().success(function(projects) {
+Project.all().then(function(projects) {
   // projects will be an array of all Project instances
 });
 
 // search for specific attributes - hash usage
-Project.findAll({ where: { name: 'A Project' } }).success(function(projects) {
+Project.findAll({ where: { name: 'A Project' } }).then(function(projects) {
   // projects will be an array of Project instances with the specified name
 });
 
 // search with string replacements
-Project.findAll({ where: ["id > ?", 25] }).success(function(projects) {
+Project.findAll({ where: ["id > ?", 25] }).then(function(projects) {
   // projects will be an array of Projects having a greater id than 25
 });
 
 // search within a specific range
-Project.findAll({ where: { id: [1,2,3] } }).success(function(projects) {
+Project.findAll({ where: { id: [1,2,3] } }).then(function(projects) {
   // projects will be an array of Projects having the id 1, 2 or 3
   // this is actually doing an IN query
 });
 
 // or
-Project.findAll({ where: "name = 'A Project'" }).success(function(projects) {
+Project.findAll({ where: "name = 'A Project'" }).then(function(projects) {
   // the difference between this and the usage of hashes (objects) is, that string usage
   // is not sql injection safe. so make sure you know what you are doing!
 });
@@ -430,11 +430,11 @@ Project.find({
 });
 
 
-Project.count().success(function(c) {
+Project.count().then(function(c) {
   console.log("There are " + c + " projects!")
 });
 
-Project.count({ where: ["id > ?", 25] }).success(function(c) {
+Project.count({ where: ["id > ?", 25] }).then(function(c) {
   console.log("There are " + c + " projects with an id greater than 25.")
 });
 
@@ -444,11 +444,11 @@ Project.count({ where: ["id > ?", 25] }).success(function(c) {
   the second one is 5 years old,
   the third one is 40 years old.
 */
-Project.max('age').success(function(max) {
+Project.max('age').then(function(max) {
   // this will return 40
 });
 
-Project.max('age', { where: { age: { lt: 20 } } }).success(function(max) {
+Project.max('age', { where: { age: { lt: 20 } } }).then(function(max) {
   // wil be 10
 });
 
@@ -458,11 +458,11 @@ Project.max('age', { where: { age: { lt: 20 } } }).success(function(max) {
   the second one is 5 years old,
   the third one is 40 years old.
 */
-Project.min('age').success(function(min) {
+Project.min('age').then(function(min) {
   // this will return 5
 });
 
-Project.min('age', { where: { age: { gt: 5 } } }).success(function(min) {
+Project.min('age', { where: { age: { gt: 5 } } }).then(function(min) {
   // wil be 10
 });
 
@@ -472,11 +472,11 @@ Project.min('age', { where: { age: { gt: 5 } } }).success(function(min) {
   the second one is 5 years old,
   the third one is 40 years old.
 */
-Project.sum('age').success(function(sum) {
+Project.sum('age').then(function(sum) {
   // this will return 55
 });
 
-Project.sum('age', { where: { age: { gt: 5 } } }).success(function(sum) {
+Project.sum('age', { where: { age: { gt: 5 } } }).then(function(sum) {
   // wil be 50
 });
 
@@ -503,6 +503,13 @@ interface IGlobalModel<T> extends Sequelize.Model<IGlobalInstance<T>, {}> {
   method1(): void;
   method2(): void;
 }
+
+interface IUser2 {
+  username: string;
+  job: string;
+}
+interface IUser2Instance extends Sequelize.Instance<IUser2> {}
+interface IUser2Model extends Sequelize.Model<IUser2Instance, IUser2> {}
 
 (function models2() {
 
@@ -546,11 +553,10 @@ Foo2.method1();
 Foo2.method2();
 Foo2.build({}).method3();
 
-
-var User2 = sequelize.define<Sequelize.ModelT<{ username: string; job: string; }>>('User2', { username: Sequelize.STRING, job: Sequelize.STRING });
+var User2 = sequelize.define<IUser2Model>('User2', { username: Sequelize.STRING, job: Sequelize.STRING });
 User2
   .findOrCreate({ username: 'sdepold' }, { job: 'Technical Lead JavaScript' })
-  .success(function(user, created) {
+  .spread(function(user: IUser2Instance, created: boolean) {
     console.log(user.values)
     console.log(created)
 
@@ -567,10 +573,10 @@ User2
   });
 User2
   .create({ username: 'fnord', job: 'omnomnom' })
-  .success(function() {
+  .then(function() {
     User
       .findOrCreate({ username: 'fnord' }, { job: 'something else' })
-      .success(function(user, created) {
+      .spread(function(user: IUser2Instance, created: boolean) {
         console.log(user.values)
         console.log(created)
 
@@ -605,7 +611,7 @@ sequelize.sync().done(function() {
   // this is where we continue ...
 });
 
-Task.findAll({ include: [{ model: User }] }).success(function(tasks) {
+Task.findAll({ include: [{ model: User }] }).then(function(tasks) {
   console.log(JSON.stringify(tasks))
 
   /*
@@ -624,7 +630,7 @@ Task.findAll({ include: [{ model: User }] }).success(function(tasks) {
     }]
   */
 });
-User.findAll({ include: [{ model: Task }] }).success(function(users) {
+User.findAll({ include: [{ model: Task }] }).then(function(users) {
   console.log(JSON.stringify(users))
 
   /*
@@ -643,7 +649,7 @@ User.findAll({ include: [{ model: Task }] }).success(function(users) {
     }]
   */
 });
-User.findAll({ include: [{ model: Tool, as: 'Instruments' }] }).success(function(users) {
+User.findAll({ include: [{ model: Tool, as: 'Instruments' }] }).then(function(users) {
   console.log(JSON.stringify(users))
 
   /*
@@ -692,7 +698,7 @@ User.findAll({
       {model: Teacher }
     ]}
   ]
-}).success(function(users) {
+}).then(function(users) {
   console.log(JSON.stringify(users))
 
   /*
@@ -715,7 +721,7 @@ User.findAll({
   */
 });
 
-Tool.findAll({ include: [{ model: User }] }).success(function(tools) {
+Tool.findAll({ include: [{ model: User }] }).then(function(tools) {
   console.log(JSON.stringify(tools))
 })
 // Error: User is not associated to Tool!

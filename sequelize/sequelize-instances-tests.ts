@@ -65,7 +65,7 @@ var task2 = Task2.build({title: 'very important task'});
 console.log(task2.values.title);  // ==> 'very important task'
 console.log(task2.values.rating); // ==> 3
 
-project.save().success(function() {
+project.save().then(function() {
   // my nice callback stuff
 });
  
@@ -77,45 +77,45 @@ task.save().error(function(error) {
 Task
   .build({ title: 'foo', description: 'bar', deadline: new Date() })
   .save()
-  .success(function(anotherTask) {
+  .then(function(anotherTask) {
     // you can now access the currently saved task with the variable anotherTask... nice!
   }).error(function(error) {
     // Ooops, do some error-handling
   });
 
-Task.create({ title: 'foo', description: 'bar', deadline: new Date() }).success(function(task) {
+Task.create({ title: 'foo', description: 'bar', deadline: new Date() }).then(function(task) {
   // you can now access the newly created task via the variable task
 });
 
 var User: Sequelize.ModelT<IUserType>;
-User.create({ username: 'barfooz', isAdmin: true }, [ 'username' ]).success(function(user) {
+User.create({ username: 'barfooz', isAdmin: true }, [ 'username' ]).then(function(user) {
   // let's assume the default of isAdmin is false:
   console.log(user.values) // => { username: 'barfooz', isAdmin: false }
 });
 
 // way 1
 task.values.title = 'a very different title now'
-task.save().success(function() {});
+task.save().then(function() {});
  
 // way 2
 task.updateAttributes({
   title: 'a very different title now'
-}).success(function() {});
+}).then(function() {});
 
 task.values.title = 'foooo'
 task.values.description = 'baaaaaar'
-task.save(['title']).success(function() {
+task.save(['title']).then(function() {
  // title will now be 'foooo' but description is the very same as before
 });
  
 // The equivalent call using updateAttributes looks like this:
-task.updateAttributes({ title: 'foooo', description: 'baaaaaar'}, ['title']).success(function() {
+task.updateAttributes({ title: 'foooo', description: 'baaaaaar'}, ['title']).then(function() {
  // title will now be 'foooo' but description is the very same as before
 });
 
-Task2.create({ title: 'a task' }).success(function(task) {
+Task2.create({ title: 'a task' }).then(function(task) {
   // now you see me...
-  task.destroy().success(function() {
+  task.destroy().then(function() {
     // now i'm gone :)
   })
 });
@@ -125,8 +125,8 @@ User.bulkCreate([
   { username: 'barfooz', isAdmin: true },
   { username: 'foo', isAdmin: true },
   { username: 'bar', isAdmin: false }
-]).success(function() { // Notice: There are no arguments here, as of right now you'll have to...
-  User.findAll().success(function(users) {
+]).then(function() { // Notice: There are no arguments here, as of right now you'll have to...
+  User.findAll().then(function(users) {
     console.log(users) // ... in order to get the array of user objects
   })
 });
@@ -136,13 +136,13 @@ Task3.bulkCreate([
   {subject: 'programming', status: 'executing'},
   {subject: 'reading', status: 'executing'},
   {subject: 'programming', status: 'finished'}
-]).success(function() {
+]).then(function() {
   Task3.update(
     {status: 'inactive'} /* set attributes' value */, 
     {subject: 'programming'} /* where criteria */
-  ).success(function(affectedRows) {
+  ).then(function(affectedRows) {
     // affectedRows will be 2
-    Task3.findAll().success(function(tasks) {
+    Task3.findAll().then(function(tasks) {
       console.log(tasks) // the 'programming' tasks will both have a status of 'inactive'
     })
   })
@@ -152,13 +152,13 @@ Task3.bulkCreate([
   {subject: 'programming', status: 'executing'},
   {subject: 'reading', status: 'executing'},
   {subject: 'programming', status: 'finished'}
-]).success(function() {
+]).then(function() {
   Task3.destroy(
     {subject: 'programming'} /* where criteria */,
     {truncate: true /* truncate the whole table, ignoring where criteria */} /* options */
-  ).success(function(affectedRows) {
+  ).then(function(affectedRows) {
     // affectedRows will be 2
-    Task3.findAll().success(function(tasks) {
+    Task3.findAll().then(function(tasks) {
       console.log(tasks) // no programming, just reading :(
     })
   })
@@ -167,7 +167,7 @@ Task3.bulkCreate([
 User.bulkCreate([
   { username: 'foo' },
   { username: 'bar', admin: true}
-], { fields: ['username'] }).success(function() {
+], { fields: ['username'] }).then(function() {
   // nope bar, you can't be admin! 
 });
  
@@ -176,7 +176,7 @@ var objects = [
   { username: 'foo' },
   { username: 'bar' }
 ];
-User.bulkCreate(objects, { fields: Object.keys(objects) }).success(function() {
+User.bulkCreate(objects, { fields: Object.keys(objects) }).then(function() {
   // ...
 });
 
@@ -231,7 +231,7 @@ var Person: Sequelize.ModelT<{ name: string; firstname: string; }>;
 Person.create({
   name: 'Rambow',
   firstname: 'John'
-}).success(function(john) {
+}).then(function(john) {
   console.log(john.values)
 });
  
@@ -244,43 +244,43 @@ Person.create({
 //   updatedAt: Tue, 01 May 2012 19:12:16 GMT
 // }
 
-Person.find({ where: { name: 'john' } }).success(function(person) {
+Person.find({ where: { name: 'john' } }).then(function(person) {
   person.values.name = 'jane'
   console.log(person.values.name) // 'jane'
  
-  person.reload().success(function() {
+  person.reload().then(function() {
     console.log(person.values.name) // 'john'
   })
 });
 
-User.find(1).success(function(user) {
-  user.increment('my-integer-field', { by: 2 }).success(() => {});
+User.find(1).then(function(user) {
+  user.increment('my-integer-field', { by: 2 }).then(() => {});
 });
 
-User.find(1).success(function(user) {
-  user.increment([ 'my-integer-field', 'my-very-other-field' ], { by: 2 }).success(() => {});
+User.find(1).then(function(user) {
+  user.increment([ 'my-integer-field', 'my-very-other-field' ], { by: 2 }).then(() => {});
 });
 
-User.find(1).success(function(user) {
+User.find(1).then(function(user) {
   user.increment({
     'my-integer-field':    2,
     'my-very-other-field': 3
-  }).success(() => {});
+  }).then(() => {});
 });
 
-User.find(1).success(function(user) {
-  user.decrement('my-integer-field', { by: 2 }).success(() => {});
+User.find(1).then(function(user) {
+  user.decrement('my-integer-field', { by: 2 }).then(() => {});
 });
 
-User.find(1).success(function(user) {
-  user.decrement([ 'my-integer-field', 'my-very-other-field' ], { by: 2 }).success(() => {});
+User.find(1).then(function(user) {
+  user.decrement([ 'my-integer-field', 'my-very-other-field' ], { by: 2 }).then(() => {});
 });
 
-User.find(1).success(function(user) {
+User.find(1).then(function(user) {
   user.decrement({
     'my-integer-field':    2,
     'my-very-other-field': 3
-  }).success(() => {});
+  }).then(() => {});
 });
 
 })();

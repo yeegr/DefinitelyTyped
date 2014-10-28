@@ -19,21 +19,21 @@ interface IProjectInstance extends Sequelize.Instance<{
   UserProjects: IUserProjectsInstance;
 }> {
   UserProjects: { status: string; }
-  getTasks(options?: Sequelize.IFindOptions): Sequelize.PromiseT<any[]>;
-  setTasks(tasks: any[]): Sequelize.PromiseT<any[]>;
-  addTask(task: any): Sequelize.Promise;
-  removeTask(task: any): Sequelize.Promise;
+  getTasks(options?: Sequelize.IFindOptions): Promise<any[]>;
+  setTasks(tasks: any[]): Promise<any[]>;
+  addTask(task: any): Promise<void>;
+  removeTask(task: any): Promise<void>;
 
-  setUsers(users: IUserInstance[]): Sequelize.PromiseT<IUserInstance[]>;
-  hasUsers(users: IUserInstance[]): Sequelize.PromiseT<boolean>;
-  hasUser(user: IUserInstance): Sequelize.PromiseT<boolean>;
-  addUser(user: IUserInstance): Sequelize.Promise;
+  setUsers(users: IUserInstance[]): Promise<IUserInstance[]>;
+  hasUsers(users: IUserInstance[]): Promise<boolean>;
+  hasUser(user: IUserInstance): Promise<boolean>;
+  addUser(user: IUserInstance): Promise<void>;
 }
 interface IProjectModel extends Sequelize.Model<IProjectInstance, {}> {}
 interface IUserInstance extends Sequelize.Instance<{}> {
-  getProjects(options?: Sequelize.IFindOptions): Sequelize.PromiseT<IProjectInstance[]>;
-  setProjects(projects: IProjectInstance[], data?: any): Sequelize.PromiseT<IProjectInstance[]>;
-  addProject(project: IProjectInstance, data?: any): Sequelize.Promise;
+  getProjects(options?: Sequelize.IFindOptions): Promise<IProjectInstance[]>;
+  setProjects(projects: IProjectInstance[], data?: any): Promise<IProjectInstance[]>;
+  addProject(project: IProjectInstance, data?: any): Promise<void>;
 }
 interface IUserModel extends Sequelize.Model<IUserInstance, {}> {}
 
@@ -165,54 +165,54 @@ Task.hasMany(Project);
 
 var project: IProjectInstance;
 var task1: any, task2: any;
-Project.create({}).success((x) => { project = x; });
-Task.create({}).success((x) => { task1 = x; });
-Task.create({}).success((x) => { task2 = x; });
+Project.create({}).then((x) => { project = x; });
+Task.create({}).then((x) => { task1 = x; });
+Task.create({}).then((x) => { task2 = x; });
 
 // save them... and then:
-project.setTasks([task1, task2]).success(function() {
+project.setTasks([task1, task2]).then(function() {
   // saved!
 });
 
 // ok now they are save... how do I get them later on?
-project.getTasks().success(function(associatedTasks) {
+project.getTasks().then(function(associatedTasks) {
   // associatedTasks is an array of tasks
 });
 
 // You can also pass filters to the getter method.
 // They are equal to the options you can pass to a usual finder method.
-project.getTasks({ where: 'id > 10' }).success(function(tasks) {
+project.getTasks({ where: 'id > 10' }).then(function(tasks) {
   // tasks with an id greater than 10 :)
 });
 
 // You can also only retrieve certain fields of a associated object.
 // This example will retrieve the attibutes "title" and "id"
-project.getTasks({attributes: ['title']}).success(function(tasks) {
+project.getTasks({attributes: ['title']}).then(function(tasks) {
   // tasks with an id greater than 10 :)
 });
 
 // remove the association with task1
-project.setTasks([task2]).success(function(associatedTasks) {
+project.setTasks([task2]).then(function(associatedTasks) {
   // you will get task2 only
 });
 
 // remove 'em all
-project.setTasks([]).success(function(associatedTasks) {
+project.setTasks([]).then(function(associatedTasks) {
   // you will get an empty array
 });
 
 // or remove 'em more directly
-project.removeTask(task1).success(function() {
+project.removeTask(task1).then(function() {
   // it's gone
 });
 
 // and add 'em again
-project.addTask(task1).success(function() {
+project.addTask(task1).then(function() {
   // it's back again
 });
 
 // project is associated with task1 and task2
-task2.setProject(null).success(function() {
+task2.setProject(null).then(function() {
   // and it's gone
 });
 
@@ -239,7 +239,7 @@ project1.UserProjects = {
 u.setProjects([project1, project2], { status: 'active' });
 // The code above will record inactive for project one, and active for project two in the join table
 
-u.getProjects().success(function(projects) {
+u.getProjects().then(function(projects) {
   var project = projects[0]
  
   if (project.values.UserProjects.status === 'active') {
@@ -255,12 +255,12 @@ u.getProjects({ attributes: ['name'], joinTableAttributes: ['status']});
 
 
 // check if an object is one of associated ones:
-Project.create({ /* */ }).success(function(project) {
-  User.create({ /* */ }).success(function(user) {
-    project.hasUser(user).success(function(result) {
+Project.create({ /* */ }).then(function(project) {
+  User.create({ /* */ }).then(function(user) {
+    project.hasUser(user).then(function(result) {
       // result would be false
-      project.addUser(user).success(function() {
-        project.hasUser(user).success(function(result) {
+      project.addUser(user).then(function() {
+        project.hasUser(user).then(function(result) {
           // result would be true
         })
       })
@@ -272,10 +272,10 @@ var user1: IUserInstance;
 var user2: IUserInstance;
 // check if all associated objects are as expected:
 // let's assume we have already a project and two users
-project.setUsers([user1, user2]).success(function() {
-  project.hasUsers([user1]).success(function(result) {
+project.setUsers([user1, user2]).then(function() {
+  project.hasUsers([user1]).then(function(result) {
     // result would be false
-    project.hasUsers([user1, user2]).success(function(result) {
+    project.hasUsers([user1, user2]).then(function(result) {
       // result would be true
     })
   })

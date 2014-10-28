@@ -5,7 +5,7 @@ import Sequelize = require('sequelize');
 (function sampleUsage1() {
   var sequelize = new Sequelize('sample','','',{dialect:'sqlite',storage:'./sample.db'});
 
-  sequelize.query('select * from test',null,{raw:true}).success(function(rows: any[]) {
+  sequelize.query('select * from test',null,{raw:true}).then(function(rows: any[]) {
     console.log(rows);
   });
 })();
@@ -20,7 +20,7 @@ import Sequelize = require('sequelize');
 
   sequelize
     .sync({force: true})
-    .complete(function(err: any) {
+    .finally(function(err: any) {
       if (err) {
         console.log('An error occurred while creating the table:', err);
       } else {
@@ -31,8 +31,8 @@ import Sequelize = require('sequelize');
         });
         user
           .save()
-          .complete(function(err: any) {
-            User.findAll({where:['id>?',0]}).success(function(result) {
+          .finally(function(err: any) {
+            User.findAll({where:['id>?',0]}).then(function(result) {
               console.log(result);
             });
           }
@@ -232,7 +232,7 @@ import Sequelize = require('sequelize');
 
 
   // Quick example
-  sequelize.query("SELECT * FROM myTable").success(function(myTableRows) {
+  sequelize.query("SELECT * FROM myTable").then(function(myTableRows) {
     console.log(myTableRows)
   });
 
@@ -241,7 +241,7 @@ import Sequelize = require('sequelize');
   var Projects: Sequelize.ModelT<{}>;
   sequelize
     .query('SELECT * FROM projects', Projects)
-    .success(function(projects){
+    .then(function(projects){
       // Each record will now be mapped to the project's DAO-Factory.
       console.log(projects)
     });
@@ -268,7 +268,7 @@ import Sequelize = require('sequelize');
   // supersede and return a raw object.
   sequelize
     .query('SELECT * FROM projects', null, { raw: true })
-    .success(function(projects) {
+    .then(function(projects) {
       console.log(projects)
     });
 
@@ -277,7 +277,7 @@ import Sequelize = require('sequelize');
       'SELECT * FROM projects WHERE status = ?', null,
       { raw: true }, ['active']
     )
-    .success(function(projects) {
+    .then(function(projects) {
       console.log(projects)
     });
 
@@ -286,7 +286,7 @@ import Sequelize = require('sequelize');
       'SELECT * FROM projects WHERE status = :status ', null,
       { raw: true }, { status: 'active' }
     )
-    .success(function(projects) {
+    .then(function(projects) {
       console.log(projects)
     });
 })();
