@@ -20,26 +20,22 @@ import Sequelize = require('sequelize');
 
   sequelize
     .sync({force: true})
-    .finally(function(err: any) {
-      if (err) {
-        console.log('An error occurred while creating the table:', err);
-      } else {
-        console.log('It worked');
-        var user = User.build({
-          username: 'username',
-          password: 'pass'
+    .then(() => {
+      console.log('It worked');
+      var user = User.build({
+        username: 'username',
+        password: 'pass'
+      });
+      user
+        .save()
+        .finally(function() {
+          User.findAll({where:['id>?',0]}).then(function(result) {
+            console.log(result);
+          });
         });
-        user
-          .save()
-          .finally(function(err: any) {
-            User.findAll({where:['id>?',0]}).then(function(result) {
-              console.log(result);
-            });
-          }
-        );
-      }
-    }
-  );
+    }, (err: any) => {
+      console.log('An error occurred while creating the table:', err);
+    });
 
   var Model = sequelize.define('model', { username: Sequelize.STRING, stuff: Sequelize.STRING, age: Sequelize.INTEGER, }, {
     defaultScope: {

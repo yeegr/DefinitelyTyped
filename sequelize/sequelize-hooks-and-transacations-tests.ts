@@ -1,6 +1,7 @@
 /// <reference path="sequelize.d.ts" />
 
 import Sequelize = require('sequelize');
+var DataTypes: Sequelize.DataTypes;
 
 
 interface IUserType {
@@ -16,9 +17,9 @@ var sequelize = new Sequelize('db','user','pass');
 
 // Method 1 via the .define() method
 var User = sequelize.define<IUserModel>('User', {
-  username: Sequelize.DataTypes.STRING,
+  username: DataTypes.STRING,
   mood: {
-    type: Sequelize.DataTypes.ENUM,
+    type: DataTypes.ENUM,
     values: ['happy', 'sad', 'neutral']
   }
 }, {
@@ -36,9 +37,9 @@ var User = sequelize.define<IUserModel>('User', {
  
 // Method 2 via the .hook() method
 var User = sequelize.define<IUserModel>('User', {
-  username: Sequelize.DataTypes.STRING,
+  username: DataTypes.STRING,
   mood: {
-    type: Sequelize.DataTypes.ENUM,
+    type: DataTypes.ENUM,
     values: ['happy', 'sad', 'neutral']
   }
 });
@@ -54,9 +55,9 @@ User.hook('afterValidate', function(user) {
  
 // Method 3 via the direct method
 var User = sequelize.define<IUserModel>('User', {
-  username: Sequelize.DataTypes.STRING,
+  username: DataTypes.STRING,
   mood: {
-    type: Sequelize.DataTypes.ENUM,
+    type: DataTypes.ENUM,
     values: ['happy', 'sad', 'neutral']
   }
 });
@@ -87,10 +88,10 @@ User.create({username: 'Boss', accessLevel: 20}).then(function(user) {
 });
 
 
-User.destroy({accessLevel: 0}, {individualHooks: true});
+User.destroy({ where: {accessLevel: 0}, individualHooks: true});
 // Will select all records that are about to be deleted and emit before- + after- Destroy on each instance
  
-User.update({username: 'Toni'}, {accessLevel: 0}, {individualHooks: true});
+User.update({ where: {username: 'Toni', accessLevel: 0}, individualHooks: true});
 // Will select all records that are about to be updated and emit before- + after- Update on each instance
  
 User.bulkCreate([{username: null, accessLevel: 0}, null], {individualHooks: true});
@@ -112,7 +113,7 @@ User.beforeBulkUpdate(function(attributes, where, fn) {
   // where = second argument sent to Model.update
 });
  
-User.update({gender: 'Male'} /*attributes argument*/, {username: 'Tom'} /*where argument*/)
+User.update({gender: 'Male'} /*attributes argument*/, { where: {username: 'Tom'} }/*where argument*/)
  
 User.beforeBulkDestroy(function(whereClause, fn) {
   // whereClause = first argument sent to Model.destroy

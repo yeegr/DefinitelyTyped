@@ -139,7 +139,7 @@ Task3.bulkCreate([
 ]).then(function() {
   Task3.update(
     {status: 'inactive'} /* set attributes' value */, 
-    {subject: 'programming'} /* where criteria */
+    { where: {subject: 'programming'} } /* where criteria */
   ).then(function(affectedRows) {
     // affectedRows will be 2
     Task3.findAll().then(function(tasks) {
@@ -154,8 +154,7 @@ Task3.bulkCreate([
   {subject: 'programming', status: 'finished'}
 ]).then(function() {
   Task3.destroy(
-    {subject: 'programming'} /* where criteria */,
-    {truncate: true /* truncate the whole table, ignoring where criteria */} /* options */
+    { where: {subject: 'programming'} /* where criteria */, truncate: true /* truncate the whole table, ignoring where criteria */} /* options */
   ).then(function(affectedRows) {
     // affectedRows will be 2
     Task3.findAll().then(function(tasks) {

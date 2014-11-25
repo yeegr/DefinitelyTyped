@@ -8,7 +8,7 @@
 
 
 declare module "sequelize" {
-  import Promise = require("bluebird");
+  import _Promise = require("bluebird");
 
   class Sequelize extends Sequelize.SequelizeStatic {
     constructor(connectionString: string, options?: Sequelize.IConfigOptions);
@@ -37,6 +37,9 @@ declare module "sequelize" {
   }
 
   module Sequelize {
+    export interface Promise<T> extends _Promise<T> {
+    }
+
     interface IAssociationOptions {
       hooks?: boolean;
       as?: string;
@@ -207,25 +210,25 @@ declare module "sequelize" {
     }
 
     class DataTypes {
-      static STRING: DataTypes.STRING;
-      static CHAR: DataTypes.CHAR;
-      static TEXT: DataTypes.TEXT;
-      static INTEGER: DataTypes.INTEGER;
-      static BIGINT: DataTypes.BIGINT;
-      static DATE: DataTypes.DATE;
-      static BOOLEAN: DataTypes.BOOLEAN;
-      static FLOAT: DataTypes.FLOAT;
-      static NOW: DataTypes.NOW;
-      static BLOB: DataTypes.BLOB;
-      static DECIMAL: DataTypes.DECIMAL;
-      static UUID: DataTypes.UUID;
-      static UUIDV1: DataTypes.UUIDV1;
-      static UUIDV4: DataTypes.UUIDV4;
-      static VIRTUAL: DataTypes.VIRTUAL;
-      static NONE: DataTypes.VIRTUAL;
-      static ENUM: DataTypes.ENUM;
-      static ARRAY: DataTypes.ARRAY;
-      static HSTORE: DataTypes.HSTORE;
+      STRING: DataTypes.STRING;
+      CHAR: DataTypes.CHAR;
+      TEXT: DataTypes.TEXT;
+      INTEGER: DataTypes.INTEGER;
+      BIGINT: DataTypes.BIGINT;
+      DATE: DataTypes.DATE;
+      BOOLEAN: DataTypes.BOOLEAN;
+      FLOAT: DataTypes.FLOAT;
+      NOW: DataTypes.NOW;
+      BLOB: DataTypes.BLOB;
+      DECIMAL: DataTypes.DECIMAL;
+      UUID: DataTypes.UUID;
+      UUIDV1: DataTypes.UUIDV1;
+      UUIDV4: DataTypes.UUIDV4;
+      VIRTUAL: DataTypes.VIRTUAL;
+      NONE: DataTypes.VIRTUAL;
+      ENUM: DataTypes.ENUM;
+      ARRAY: DataTypes.ARRAY;
+      HSTORE: DataTypes.HSTORE;
     }
 
     interface Fn {
@@ -405,8 +408,8 @@ declare module "sequelize" {
       findOrCreate(where: Object, defaults?: Object, options?: IFindOrCreateOptions): Promise<any[]>;  // [I, boolean]
 
       bulkCreate(records: T[], options?: { fields?: string[]; validate?: boolean; hooks?: boolean; individualHooks?: boolean; ignoreDuplicates?: boolean; }): Promise<I[]>;
-      destroy(where?: Object, options?: { hooks?: boolean; individualHooks?: boolean; limit?: number; truncate?: boolean; }): Promise<number>;
-      update(attrValueHash: Object, where: Object, options?: { validate?: boolean; hooks?: boolean; individualHooks?: boolean; returning?: boolean; limit?: number; }): Promise<number>;
+      destroy(options?: { where?: Object; hooks?: boolean; individualHooks?: boolean; limit?: number; force?: boolean; truncate?: boolean; cascade?: boolean; }): Promise<void>;
+      update(values: Object, options?: { where: Object; validate?: boolean; hooks?: boolean; individualHooks?: boolean; returning?: boolean; limit?: number; }): Promise<number>;
       describe<U>(): Promise<U>;
       dataset(): any; // node-sql instance.
     }
