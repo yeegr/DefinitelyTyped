@@ -1,4 +1,5 @@
-/// <reference path="sequelize.d.ts" />
+///<reference path="sequelize.d.ts" />
+///<reference path="../bluebird/bluebird.d.ts" />
 
 import Sequelize = require('sequelize');
 var DataTypes: Sequelize.DataTypes;
@@ -19,21 +20,21 @@ interface IProjectInstance extends Sequelize.Instance<{
   UserProjects: IUserProjectsInstance;
 }> {
   UserProjects: { status: string; }
-  getTasks(options?: Sequelize.IFindOptions): Sequelize.Promise<any[]>;
-  setTasks(tasks: any[]): Sequelize.Promise<any[]>;
-  addTask(task: any): Sequelize.Promise<void>;
-  removeTask(task: any): Sequelize.Promise<void>;
+  getTasks(options?: Sequelize.IFindOptions): Promise<any[]>;
+  setTasks(tasks: any[]): Promise<any[]>;
+  addTask(task: any): Promise<void>;
+  removeTask(task: any): Promise<void>;
 
-  setUsers(users: IUserInstance[]): Sequelize.Promise<IUserInstance[]>;
-  hasUsers(users: IUserInstance[]): Sequelize.Promise<boolean>;
-  hasUser(user: IUserInstance): Sequelize.Promise<boolean>;
-  addUser(user: IUserInstance): Sequelize.Promise<void>;
+  setUsers(users: IUserInstance[]): Promise<IUserInstance[]>;
+  hasUsers(users: IUserInstance[]): Promise<boolean>;
+  hasUser(user: IUserInstance): Promise<boolean>;
+  addUser(user: IUserInstance): Promise<void>;
 }
 interface IProjectModel extends Sequelize.Model<IProjectInstance, {}> {}
 interface IUserInstance extends Sequelize.Instance<{}> {
-  getProjects(options?: Sequelize.IFindOptions): Sequelize.Promise<IProjectInstance[]>;
-  setProjects(projects: IProjectInstance[], data?: any): Sequelize.Promise<IProjectInstance[]>;
-  addProject(project: IProjectInstance, data?: any): Sequelize.Promise<void>;
+  getProjects(options?: Sequelize.IFindOptions): Promise<IProjectInstance[]>;
+  setProjects(projects: IProjectInstance[], data?: any): Promise<IProjectInstance[]>;
+  addProject(project: IProjectInstance, data?: any): Promise<void>;
 }
 interface IUserModel extends Sequelize.Model<IUserInstance, {}> {}
 
