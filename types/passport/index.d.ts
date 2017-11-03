@@ -29,6 +29,7 @@ declare module 'passport' {
         interface AuthenticateOptions {
             authInfo?: boolean;
             assignProperty?: string;
+            badRequestMessage?: string;
             failureFlash?: string|boolean|any;
             failureMessage?: boolean|string;
             failureRedirect?: string;
